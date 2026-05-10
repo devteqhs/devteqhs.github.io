@@ -3,79 +3,459 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>teqhs</title>
+
     <style>
+        * {
+          box-sizing: border-box;
+        }
+
+        :root {
+          --background: #f5f5f7;
+          --surface: #ffffff;
+          --text: #1d1d1f;
+          --muted: #6e6e73;
+          --muted-light: #86868b;
+          --separator: rgba(0, 0, 0, 0.08);
+          --blue: #0071e3;
+          --blue-hover: #0066cc;
+        }
+
+        html {
+          scroll-behavior: smooth;
+        }
+
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f1117;
-            color: white;
+          margin: 0;
+          min-height: 100vh;
+          background:
+            radial-gradient(circle at 50% -20%, rgba(0, 113, 227, 0.10), transparent 32%),
+            var(--background);
+          color: var(--text);
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        .topbar {
+          position: sticky;
+          top: 0;
+          z-index: 10;
+          height: 48px;
+          background: rgba(245, 245, 247, 0.72);
+          backdrop-filter: saturate(180%) blur(20px);
+          -webkit-backdrop-filter: saturate(180%) blur(20px);
+          border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .topbar-inner {
+          height: 100%;
+          width: 100%;
+          max-width: 860px;
+          margin: 0 auto;
+          padding: 0 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .brand {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--text);
+          letter-spacing: -0.01em;
+          text-decoration: none;
+          transition: color 0.2s ease;
+        }
+
+        .brand:hover {
+          color: var(--blue);
+        }
+
+        .nav {
+          display: flex;
+          align-items: center;
+          gap: 22px;
+        }
+
+        .nav a {
+          color: var(--muted);
+          text-decoration: none;
+          font-size: 13px;
+          font-weight: 500;
+          letter-spacing: -0.01em;
+          transition: color 0.2s ease;
+        }
+
+        .nav a:hover {
+          color: var(--blue);
         }
 
         main {
-            max-width: 750px;
-            margin: 80px auto;
-            padding: 24px;
+          width: 100%;
+          max-width: 860px;
+          margin: 0 auto;
+          padding: 88px 24px 48px;
+        }
+
+        .hero {
+          text-align: center;
+          padding: 46px 0 92px;
+          scroll-margin-top: 80px;
+        }
+
+        .eyebrow {
+          margin: 0 0 12px;
+          color: var(--muted);
+          font-size: 19px;
+          font-weight: 600;
+          letter-spacing: -0.03em;
         }
 
         h1 {
-            font-size: 52px;
-            margin-bottom: 8px;
+          margin: 0;
+          font-size: clamp(72px, 13vw, 148px);
+          line-height: 0.9;
+          font-weight: 700;
+          letter-spacing: -0.085em;
+          color: var(--text);
         }
 
-        h2 {
-            margin-top: 36px;
-            color: #ffffff;
+        .headline {
+          margin: 30px auto 0;
+          max-width: 640px;
+          font-size: clamp(28px, 4.5vw, 48px);
+          line-height: 1.08;
+          font-weight: 700;
+          letter-spacing: -0.06em;
+          color: var(--text);
         }
 
-        p, li {
-            color: #c9c9c9;
-            line-height: 1.6;
-            font-size: 17px;
+        .headline span {
+          color: var(--blue);
+          transition: color 0.2s ease;
         }
 
-        a {
-            color: #8ab4ff;
-            text-decoration: none;
+        .headline:hover span {
+          color: var(--blue-hover);
+        }
+
+        .subhead {
+          margin: 20px auto 0;
+          max-width: 520px;
+          color: var(--muted);
+          font-size: 18px;
+          line-height: 1.45;
+          letter-spacing: -0.025em;
+        }
+
+        .section {
+          margin-top: 36px;
+          scroll-margin-top: 80px;
+        }
+
+        .section-label {
+          margin: 0 0 14px;
+          color: var(--muted);
+          font-size: 14px;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+        }
+
+        .card-wrap {
+          position: relative;
+        }
+
+        .card-wrap::before {
+          content: "";
+          position: absolute;
+          inset: -12px;
+          z-index: -1;
+          border-radius: 32px;
+          background: rgba(0, 0, 0, 0.12);
+          filter: blur(14px);
+          opacity: 0.65;
+          pointer-events: none;
+          transition:
+            opacity 0.25s ease,
+            filter 0.25s ease,
+            transform 0.25s ease;
+        }
+
+        .card-wrap:hover::before {
+          opacity: 0.8;
+          filter: blur(16px);
+          transform: translateY(1px);
         }
 
         .card {
-            background: #171a23;
-            border: 1px solid #282c38;
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
+          overflow: hidden;
+          background: rgba(255, 255, 255, 0.94);
+          border-radius: 24px;
+          border: 0.5px solid rgba(255, 255, 255, 0.9);
+          box-shadow:
+            0 18px 44px rgba(0, 0, 0, 0.08),
+            0 6px 18px rgba(0, 0, 0, 0.04),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+          transition:
+            background-color 0.25s ease,
+            box-shadow 0.25s ease,
+            transform 0.25s ease;
+        }
+
+        .card:hover {
+          background: rgba(255, 255, 255, 0.99);
+          box-shadow:
+            0 22px 52px rgba(0, 0, 0, 0.10),
+            0 8px 22px rgba(0, 0, 0, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+          transform: translateY(-1px);
+        }
+
+        .project-card {
+          min-height: 150px;
+          padding: 30px 34px;
+          display: grid;
+          grid-template-columns: auto 1px 1fr;
+          align-items: center;
+          gap: 26px;
+        }
+
+        .project-name {
+          margin: 0;
+          font-size: clamp(28px, 4vw, 40px);
+          line-height: 1;
+          font-weight: 700;
+          letter-spacing: -0.055em;
+          color: var(--text);
+          transition: color 0.2s ease;
+          text-align: left;
+          white-space: nowrap;
+        }
+
+        .project-divider {
+          width: 1px;
+          height: 58px;
+          background: var(--separator);
+        }
+
+        .project-description {
+          margin: 0;
+          max-width: 520px;
+          color: var(--muted);
+          font-size: 17px;
+          line-height: 1.45;
+          letter-spacing: -0.025em;
+          text-align: left;
+        }
+
+        .project-card:hover .project-name {
+          color: var(--blue);
+        }
+
+        .row {
+          min-height: 62px;
+          padding: 0 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          border-bottom: 1px solid var(--separator);
+          transition:
+            background-color 0.2s ease,
+            padding-left 0.2s ease;
+        }
+
+        .row:last-child {
+          border-bottom: none;
+        }
+
+        .row:hover {
+          background-color: rgba(0, 113, 227, 0.035);
+          padding-left: 28px;
+        }
+
+        .subject {
+          font-size: 18px;
+          font-weight: 500;
+          color: var(--text);
+          letter-spacing: -0.03em;
+          transition: color 0.2s ease;
+        }
+
+        .grade {
+          font-size: 18px;
+          font-weight: 500;
+          color: var(--muted);
+          letter-spacing: -0.03em;
+          white-space: nowrap;
+          transition: color 0.2s ease;
+        }
+
+        .grade.highlight {
+          color: var(--blue);
+        }
+
+        .row:hover .subject {
+          color: #000000;
+        }
+
+        .row:hover .grade {
+          color: var(--blue);
+        }
+
+        footer {
+          padding: 76px 0 18px;
+          text-align: center;
+          color: var(--muted-light);
+          font-size: 12px;
+        }
+
+        @media (max-width: 640px) {
+          .topbar-inner {
+            padding: 0 18px;
+          }
+
+          .nav {
+            gap: 14px;
+          }
+
+          .nav a {
+            font-size: 12px;
+          }
+
+          main {
+            padding: 64px 18px 38px;
+          }
+
+          .hero {
+            padding-bottom: 72px;
+          }
+
+          h1 {
+            font-size: clamp(64px, 18vw, 96px);
+          }
+
+          .headline {
+            font-size: clamp(26px, 7vw, 38px);
+          }
+
+          .project-card {
+            min-height: 170px;
+            padding: 26px 22px;
+            grid-template-columns: 1fr;
+            gap: 14px;
+          }
+
+          .project-divider {
+            width: 100%;
+            height: 1px;
+          }
+
+          .project-description {
+            font-size: 15px;
+          }
+
+          .row {
+            padding: 0 18px;
+          }
+
+          .row:hover {
+            padding-left: 20px;
+          }
+
+          .subject,
+          .grade {
+            font-size: 16px;
+          }
+
+          .card-wrap::before {
+            inset: -10px;
+            filter: blur(12px);
+          }
+
+          .card-wrap:hover::before {
+            filter: blur(14px);
+          }
         }
     </style>
 </head>
+
 <body>
-    <main>
+<header class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" href="#about">teqhs</a>
+
+        <nav class="nav">
+            <a href="#about">About me</a>
+            <a href="#projects">Projects</a>
+            <a href="#education">Education</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="hero" id="about">
+        <p class="eyebrow">Personal site</p>
+
         <h1>teqhs</h1>
-        <p>Hi, I’m teqhs. This is my personal website.</p>
 
-        <div class="card">
-            <h2>About me</h2>
-            <p>
-                I’m interested in Minecraft client development, modding, games,
-                maths, and tech.
-            </p>
-        </div>
+        <p class="headline">
+            Mathematics, Physics, and <span>Java</span>.
+        </p>
 
-        <div class="card">
-            <h2>Projects</h2>
-            <ul>
-                <li>Osmium Client</li>
-                <li>Minecraft modding</li>
-                <li>Arma Reforger scenarios</li>
-            </ul>
-        </div>
+        <p class="subhead">
+            A simple place for information about what I study and what I work on.
+        </p>
+    </section>
 
-        <div class="card">
-            <h2>Links</h2>
-            <p>
-                GitHub: <a href="https://github.com/yourusername">yourusername</a>
-            </p>
+    <section class="section" id="projects">
+        <p class="section-label">Projects</p>
+
+        <div class="card-wrap">
+            <div class="card project-card">
+                <p class="project-name">osmium</p>
+
+                <div class="project-divider"></div>
+
+                <p class="project-description">
+                    A Minecraft client for 1.8.9/26.2 which adds several visual and gameplay improvements.
+                </p>
+            </div>
         </div>
-    </main>
+    </section>
+
+    <section class="section" id="education">
+        <p class="section-label">Education</p>
+
+        <div class="card-wrap">
+            <div class="card">
+                <div class="row">
+                    <span class="subject">Mathematics</span>
+                    <span class="grade highlight">Grade 9</span>
+                </div>
+
+                <div class="row">
+                    <span class="subject">Physics</span>
+                    <span class="grade highlight">Grade 9</span>
+                </div>
+
+                <div class="row">
+                    <span class="subject">Computer Science</span>
+                    <span class="grade">Grade 8</span>
+                </div>
+
+                <div class="row">
+                    <span class="subject">Further Mathematics</span>
+                    <span class="grade highlight">Grade 9</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        Â© 2026 teqhs
+    </footer>
+</main>
 </body>
 </html>
