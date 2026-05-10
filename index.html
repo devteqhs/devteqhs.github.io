@@ -3,374 +3,780 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>teqhs</title>
 
     <style>
         * {
-          box-sizing: border-box;
+            box-sizing: border-box;
         }
 
         :root {
-          --background: #f5f5f7;
-          --surface: #ffffff;
-          --text: #1d1d1f;
-          --muted: #6e6e73;
-          --muted-light: #86868b;
-          --separator: rgba(0, 0, 0, 0.08);
-          --blue: #0071e3;
-          --blue-hover: #0066cc;
+            --background: #f5f5f7;
+            --surface: rgba(255, 255, 255, 0.45);
+
+            --text: #1d1d1f;
+            --muted: #6e6e73;
+            --muted-light: #86868b;
+            --faint: #aeaeb2;
+
+            --separator: rgba(0, 0, 0, 0.08);
+
+            --blue: #0071e3;
+            --blue-hover: #0066cc;
+
+            --card-shadow:
+                0 2px 1px rgba(0, 0, 0, 0.02),
+                0 8px 24px rgba(0, 0, 0, 0.06),
+                0 20px 48px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
         }
 
         html {
-          scroll-behavior: smooth;
+            scroll-behavior: smooth;
         }
 
         body {
-          margin: 0;
-          min-height: 100vh;
-          background:
-            radial-gradient(circle at 50% -20%, rgba(0, 113, 227, 0.10), transparent 32%),
-            var(--background);
-          color: var(--text);
-          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
-          -webkit-font-smoothing: antialiased;
+            margin: 0;
+            min-height: 100vh;
+
+            background: var(--background);
+            color: var(--text);
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "SF Pro Text",
+                "Segoe UI",
+                sans-serif;
+
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        /* 🔧 FIX ONLY: link behaviour (no underline, no purple) */
+        /* ───────────────── background ───────────────── */
+
+        .bg-blobs {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(56px);
+
+            animation: float 16s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 520px;
+            height: 520px;
+
+            top: 10%;
+            left: 50%;
+
+            transform: translateX(-90%);
+
+            background: rgba(0, 113, 227, 0.22);
+        }
+
+        .blob-2 {
+            width: 420px;
+            height: 420px;
+
+            top: 40%;
+            left: 50%;
+
+            transform: translateX(12%);
+
+            background: rgba(0, 145, 255, 0.16);
+
+            animation-delay: -4s;
+        }
+
+        .blob-3 {
+            width: 420px;
+            height: 420px;
+
+            top: 68%;
+            left: 50%;
+
+            transform: translateX(-60%);
+
+            background: rgba(0, 113, 227, 0.17);
+
+            animation-delay: -8s;
+        }
+
+        .blob-4 {
+            width: 360px;
+            height: 360px;
+
+            top: 80%;
+            left: 50%;
+
+            transform: translateX(10%);
+
+            background: rgba(0, 175, 255, 0.14);
+
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) translateX(0px);
+            }
+
+            50% {
+                transform: translateY(-24px) translateX(12px);
+            }
+
+            100% {
+                transform: translateY(0px) translateX(0px);
+            }
+        }
+
         a {
-          text-decoration: none;
-          color: inherit;
+            text-decoration: none;
+            color: inherit;
         }
 
         a:visited {
-          color: inherit;
+            color: inherit;
         }
 
-        a:focus {
-          outline: none;
-        }
+        /* ───────────────── topbar ───────────────── */
 
         .topbar {
-          position: sticky;
-          top: 0;
-          z-index: 10;
-          height: 48px;
-          background: rgba(245, 245, 247, 0.72);
-          backdrop-filter: saturate(180%) blur(20px);
-          -webkit-backdrop-filter: saturate(180%) blur(20px);
-          border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+
+            z-index: 100;
+
+            height: 48px;
+
+            background: rgba(245, 245, 247, 0.7);
+
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
         }
 
         .topbar-inner {
-          height: 100%;
-          width: 100%;
-          max-width: 860px;
-          margin: 0 auto;
-          padding: 0 24px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+            width: 100%;
+            max-width: 920px;
+            height: 100%;
+
+            margin: 0 auto;
+            padding: 0 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .brand {
-          font-size: 14px;
-          font-weight: 600;
-          color: var(--text);
-          letter-spacing: -0.01em;
-          transition: color 0.2s ease;
+            font-size: 14px;
+            font-weight: 600;
+
+            letter-spacing: -0.01em;
+
+            transition: color 0.2s ease;
         }
 
         .brand:hover {
-          color: var(--blue);
+            color: var(--blue);
         }
 
         .nav {
-          display: flex;
-          align-items: center;
-          gap: 22px;
+            display: flex;
+            align-items: center;
+            gap: 22px;
         }
 
         .nav a {
-          color: var(--muted);
-          font-size: 13px;
-          font-weight: 500;
-          transition: color 0.2s ease;
+            position: relative;
+
+            color: var(--muted);
+
+            font-size: 13px;
+            font-weight: 500;
+
+            letter-spacing: -0.01em;
+
+            transition: color 0.25s ease;
+        }
+
+        .nav a::after {
+            content: "";
+
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+
+            width: 100%;
+            height: 2px;
+
+            border-radius: 999px;
+
+            background: var(--blue);
+
+            transform: scaleX(0);
+            transform-origin: center;
+
+            transition: transform 0.25s ease;
         }
 
         .nav a:hover {
-          color: var(--blue);
+            color: var(--blue);
         }
 
+        .nav a.active {
+            color: var(--blue);
+        }
+
+        .nav a.active::after {
+            transform: scaleX(1);
+        }
+
+        /* ───────────────── main ───────────────── */
+
         main {
-          width: 100%;
-          max-width: 860px;
-          margin: 0 auto;
-          padding: 88px 24px 48px;
+            width: 100%;
+            max-width: 920px;
+
+            margin: 0 auto;
+            padding: 88px 24px 56px;
         }
 
         .hero {
-          text-align: center;
-          padding: 46px 0 92px;
-          scroll-margin-top: 80px;
+            text-align: center;
+
+            padding: 56px 0 104px;
+
+            scroll-margin-top: 90px;
         }
 
         h1 {
-          margin: 0;
-          font-size: clamp(72px, 13vw, 148px);
-          line-height: 0.9;
-          font-weight: 700;
-          letter-spacing: -0.085em;
+            margin: 0;
+
+            font-size: clamp(72px, 13vw, 148px);
+            line-height: 0.9;
+
+            font-weight: 700;
+
+            letter-spacing: -0.085em;
         }
 
         .headline {
-          margin: 30px auto 0;
-          max-width: 640px;
-          font-size: clamp(28px, 4.5vw, 48px);
-          line-height: 1.08;
-          font-weight: 700;
-          letter-spacing: -0.06em;
+            margin: 30px auto 0;
+            max-width: 640px;
+
+            font-size: clamp(28px, 4.5vw, 48px);
+            line-height: 1.08;
+
+            font-weight: 700;
+
+            letter-spacing: -0.06em;
         }
 
         .headline span {
-          color: var(--blue);
-          transition: color 0.2s ease;
+            color: var(--blue);
+
+            transition: color 0.2s ease;
         }
 
         .headline:hover span {
-          color: var(--blue-hover);
+            color: var(--blue-hover);
         }
 
         .section {
-          margin-top: 36px;
-          scroll-margin-top: 80px;
+            margin-top: 42px;
+
+            scroll-margin-top: 90px;
         }
 
         .section-label {
-          margin: 0 0 14px;
-          color: var(--muted);
-          font-size: 14px;
-          font-weight: 600;
+            margin-bottom: 16px;
+            padding-left: 2px;
+
+            color: var(--faint);
+
+            font-size: 12px;
+            font-weight: 600;
+
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
 
+        /* ───────────────── cards ───────────────── */
+
         .card-wrap {
-          position: relative;
+            position: relative;
         }
 
         .card-wrap::before {
-          content: "";
-          position: absolute;
-          inset: -12px;
-          z-index: -1;
-          border-radius: 32px;
-          background: rgba(0, 0, 0, 0.12);
-          filter: blur(14px);
-          opacity: 0.65;
-          pointer-events: none;
-          transition: all 0.25s ease;
+            content: "";
+
+            position: absolute;
+            inset: -10px;
+
+            z-index: -1;
+
+            border-radius: 32px;
+
+            background: rgba(0, 0, 0, 0.18);
+
+            filter: blur(14px);
+
+            opacity: 0.16;
+
+            transition:
+                opacity 0.35s ease,
+                transform 0.35s ease,
+                filter 0.35s ease;
         }
 
         .card-wrap:hover::before {
-          opacity: 0.8;
-          filter: blur(16px);
-          transform: translateY(1px);
+            opacity: 0.24;
+
+            transform: translateY(2px);
+
+            filter: blur(16px);
         }
 
         .card {
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.94);
-          border-radius: 24px;
-          border: 0.5px solid rgba(255, 255, 255, 0.9);
-          box-shadow:
-            0 18px 44px rgba(0, 0, 0, 0.08),
-            0 6px 18px rgba(0, 0, 0, 0.04),
-            inset 0 1px 0 rgba(255, 255, 255, 0.95);
-          transition: all 0.25s ease;
+            overflow: hidden;
+
+            background: var(--surface);
+
+            border-radius: 20px;
+
+            border: 0.5px solid rgba(255, 255, 255, 0.9);
+
+            box-shadow: var(--card-shadow);
+
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+
+            transition:
+                transform 0.35s cubic-bezier(.2,.8,.2,1),
+                box-shadow 0.35s ease;
         }
 
         .card:hover {
-          transform: translateY(-1px);
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 2px 1px rgba(0, 0, 0, 0.02),
+                0 12px 32px rgba(0, 0, 0, 0.09),
+                0 28px 56px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
         }
 
+        /* ───────────────── project card ───────────────── */
+
         .project-card {
-          min-height: 150px;
-          padding: 30px 34px;
-          display: grid;
-          grid-template-columns: auto 1px 1fr;
-          align-items: center;
-          gap: 26px;
+            min-height: 150px;
+
+            padding: 30px 34px;
+
+            display: grid;
+            grid-template-columns: auto 1px 1fr;
+
+            align-items: center;
+            gap: 24px;
         }
 
         .project-name {
-          margin: 0;
-          font-size: clamp(28px, 4vw, 40px);
-          font-weight: 700;
-          letter-spacing: -0.055em;
+            margin: 0;
+
+            font-size: clamp(24px, 3.5vw, 34px);
+            line-height: 1;
+
+            font-weight: 700;
+
+            letter-spacing: -0.055em;
+
+            white-space: nowrap;
+
+            transition: color 0.25s ease;
         }
 
         .project-divider {
-          width: 1px;
-          height: 58px;
-          background: var(--separator);
+            width: 1px;
+            height: 58px;
+
+            background: var(--separator);
         }
 
         .project-description {
-          margin: 0;
-          color: var(--muted);
-          font-size: 17px;
+            margin: 0;
+
+            max-width: 520px;
+
+            color: var(--muted);
+
+            font-size: 17px;
+            line-height: 1.45;
+
+            letter-spacing: -0.025em;
         }
 
         .project-card:hover .project-name {
-          color: var(--blue);
+            color: var(--blue);
         }
 
+        /* ───────────────── rows ───────────────── */
+
         .row {
-          min-height: 62px;
-          padding: 0 24px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 20px;
-          border-bottom: 1px solid var(--separator);
-          transition: all 0.2s ease;
+            min-height: 62px;
+
+            padding: 0 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            border-bottom: 1px solid var(--separator);
+
+            transition:
+                background-color 0.25s ease,
+                padding-left 0.25s ease;
         }
 
         .row:last-child {
-          border-bottom: none;
+            border-bottom: none;
         }
 
         .row:hover {
-          background-color: rgba(0, 113, 227, 0.035);
-          padding-left: 28px;
+            background-color: rgba(0, 113, 227, 0.035);
+
+            padding-left: 28px;
+        }
+
+        .subject,
+        .grade {
+            font-size: 18px;
+
+            letter-spacing: -0.03em;
         }
 
         .subject {
-          font-size: 18px;
-          font-weight: 500;
+            font-weight: 500;
         }
 
         .grade {
-          font-size: 18px;
-          color: var(--muted);
+            color: var(--muted);
+
+            font-weight: 500;
         }
 
         .grade.highlight {
-          color: var(--blue);
+            color: var(--blue);
         }
 
-        .row:hover .subject {
-          color: #000;
-        }
-
-        .row:hover .grade {
-          color: var(--blue);
-        }
-
-        /* GitHub link ONLY */
         .link {
-          color: var(--muted);
-          transition: color 0.2s ease;
+            color: var(--muted);
+
+            transition: color 0.2s ease;
         }
 
         .link:hover {
-          color: var(--blue);
+            color: var(--blue);
         }
 
         footer {
-          padding: 76px 0 18px;
-          text-align: center;
-          color: var(--muted-light);
-          font-size: 12px;
+            padding: 88px 0 24px;
+
+            text-align: center;
+
+            color: var(--muted-light);
+
+            font-size: 12px;
+        }
+
+        /* ───────────────── reveal ───────────────── */
+
+        .reveal {
+            opacity: 0;
+
+            transform: translateY(32px);
+
+            transition:
+                opacity 0.9s cubic-bezier(.2,.8,.2,1),
+                transform 0.9s cubic-bezier(.2,.8,.2,1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+
+            transform: translateY(0);
+        }
+
+        /* ───────────────── responsive ───────────────── */
+
+        @media (max-width: 640px) {
+            .topbar-inner {
+                padding: 0 18px;
+            }
+
+            .nav {
+                gap: 14px;
+            }
+
+            .nav a {
+                font-size: 12px;
+            }
+
+            main {
+                padding: 64px 18px 38px;
+            }
+
+            .hero {
+                padding-bottom: 72px;
+            }
+
+            h1 {
+                font-size: clamp(64px, 18vw, 96px);
+            }
+
+            .headline {
+                font-size: clamp(26px, 7vw, 38px);
+            }
+
+            .project-card {
+                min-height: 170px;
+
+                padding: 26px 22px;
+
+                grid-template-columns: 1fr;
+
+                gap: 16px;
+            }
+
+            .project-divider {
+                display: none;
+            }
+
+            .project-description {
+                font-size: 15px;
+            }
+
+            .row {
+                padding: 0 18px;
+            }
+
+            .row:hover {
+                padding-left: 20px;
+            }
+
+            .subject,
+            .grade {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 
 <body>
+
+<div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+
 <header class="topbar">
+
     <div class="topbar-inner">
+
         <a class="brand" href="#about">teqhs</a>
 
         <nav class="nav">
-            <a href="#about">About me</a>
-            <a href="#projects">Projects</a>
-            <a href="#education">Education</a>
-            <a href="#contact">Contact</a>
+            <a href="#about" class="nav-link active">About me</a>
+            <a href="#projects" class="nav-link">Projects</a>
+            <a href="#education" class="nav-link">Education</a>
+            <a href="#contact" class="nav-link">Contact</a>
         </nav>
+
     </div>
+
 </header>
 
 <main>
 
-    <section class="hero" id="about">
+    <section class="hero reveal" id="about">
+
         <h1>teqhs</h1>
-        <p class="headline">maths, physics, and <span>java</span>.</p>
+
+        <p class="headline">
+            maths, physics, and <span>java</span>.
+        </p>
+
     </section>
 
-    <section class="section" id="projects">
+    <section class="section reveal" id="projects">
+
         <p class="section-label">Projects</p>
 
         <div class="card-wrap">
-            <div class="card project-card">
-                <p class="project-name">osmium</p>
-                <div class="project-divider"></div>
-                <p class="project-description">
-                    A Minecraft client for 1.8.9/26.2 which adds several visual and gameplay improvements.
-                </p>
+
+            <div class="card">
+
+                <div class="project-card">
+
+                    <p class="project-name">osmium</p>
+
+                    <div class="project-divider"></div>
+
+                    <p class="project-description">
+                        A Minecraft client for 1.8.9 / 26.2-x which adds several visual and gameplay improvements.
+                    </p>
+
+                </div>
+
             </div>
+
         </div>
+
     </section>
 
-    <section class="section" id="education">
+    <section class="section reveal" id="education">
+
         <p class="section-label">Education</p>
 
         <div class="card-wrap">
+
             <div class="card">
+
                 <div class="row">
                     <span class="subject">Mathematics</span>
                     <span class="grade highlight">Grade 9</span>
                 </div>
+
                 <div class="row">
                     <span class="subject">Physics</span>
                     <span class="grade highlight">Grade 9</span>
                 </div>
+
                 <div class="row">
                     <span class="subject">Computer Science</span>
                     <span class="grade">Grade 8</span>
                 </div>
+
                 <div class="row">
                     <span class="subject">Further Mathematics</span>
                     <span class="grade highlight">Grade 9</span>
                 </div>
+
             </div>
+
         </div>
+
     </section>
 
-    <section class="section" id="contact">
+    <section class="section reveal" id="contact">
+
         <p class="section-label">Contact</p>
 
         <div class="card-wrap">
+
             <div class="card">
 
                 <div class="row">
+
                     <span class="subject">GitHub</span>
+
                     <span class="grade">
-                        <a href="https://github.com/devteqhs" target="_blank" class="link">
+                        <a
+                                href="https://github.com/devteqhs"
+                                target="_blank"
+                                class="link"
+                        >
                             github.com/devteqhs
                         </a>
                     </span>
+
                 </div>
 
                 <div class="row">
                     <span class="subject">Discord</span>
-                    <span class="grade">teqhs.</span>
+                    <span class="grade">teqhs</span>
                 </div>
 
             </div>
+
         </div>
+
     </section>
 
     <footer>© 2026 teqhs</footer>
 
 </main>
+
+<script>
+    // ───────────────── reveal animations ─────────────────
+
+    const reveals = document.querySelectorAll('.reveal');
+
+    const revealObserver = new IntersectionObserver(entries => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+
+        });
+
+    }, {
+        threshold: 0.12
+    });
+
+    reveals.forEach(el => revealObserver.observe(el));
+
+    // ───────────────── nav highlight ─────────────────
+
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    const navObserver = new IntersectionObserver(entries => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+                navLinks.forEach(link => {
+
+                    link.classList.toggle(
+                        'active',
+                        link.getAttribute('href') === '#' + entry.target.id
+                    );
+
+                });
+
+            }
+
+        });
+
+    }, {
+        threshold: 0.45
+    });
+
+    sections.forEach(section => navObserver.observe(section));
+</script>
+
 </body>
 </html>
