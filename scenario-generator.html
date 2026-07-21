@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scenario Generator - teqhs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- THEME PICKER OVERLAY -->
+<div id="theme-picker">
+    <div class="picker-content">
+        <h2>Choose your look.</h2>
+        <div class="picker-btns">
+            <button class="picker-btn btn-dark" onclick="setInitialTheme('dark')">Dark Mode</button>
+            <button class="picker-btn btn-light" onclick="setInitialTheme('light')">Light Mode</button>
+        </div>
+    </div>
+</div>
+
+<div class="bg-blobs">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div><div class="blob blob-4"></div>
+</div>
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" href="index.html">teqhs</a>
+        <nav class="nav">
+            <a href="index.html#about" class="nav-link">About</a>
+            <a href="index.html#projects" class="nav-link">Projects</a>
+            <a href="index.html#education" class="nav-link">Education</a>
+            <a href="scenario-generator.html" class="nav-link active">Scenario Generator</a>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <svg viewBox="0 0 24 24" id="theme-icon"></svg>
+            </button>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="hero reveal">
+        <h1>Scenario Generator</h1>
+    </section>
+
+    <section class="section reveal">
+        <div class="card-wrap">
+            <div class="card" style="padding: 32px;">
+                <div style="display: grid; gap: 24px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: var(--faint); margin-bottom: 8px;">BLUFOR UNIT TYPE</label>
+                        <select id="blufor-select" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--separator); background: var(--surface); color: var(--text); font-size: 15px; cursor: pointer;">
+                            <option value="infantry">Infantry Squad</option>
+                            <option value="mechanized">Mechanized Infantry</option>
+                            <option value="armored">Armored Platoon</option>
+                            <option value="special-forces">Special Forces Team</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: var(--faint); margin-bottom: 8px;">BLUFOR MAX SIZE</label>
+                        <div class="custom-slider" data-slider="blufor" data-min="5" data-max="50" data-value="20">
+                            <div class="slider-track"></div>
+                            <div class="slider-fill"></div>
+                            <div class="slider-thumb"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px;">
+                            <span>5</span>
+                            <span id="blufor-max-value">20</span>
+                            <span>50</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: var(--faint); margin-bottom: 8px;">REDFOR UNIT TYPE</label>
+                        <select id="redfor-select" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--separator); background: var(--surface); color: var(--text); font-size: 15px; cursor: pointer;">
+                            <option value="infantry">Infantry Squad</option>
+                            <option value="mechanized">Mechanized Infantry</option>
+                            <option value="armored">Armored Platoon</option>
+                            <option value="special-forces">Special Forces Team</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: var(--faint); margin-bottom: 8px;">REDFOR MAX SIZE</label>
+                        <div class="custom-slider" data-slider="redfor" data-min="5" data-max="50" data-value="20">
+                            <div class="slider-track"></div>
+                            <div class="slider-fill"></div>
+                            <div class="slider-thumb"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px;">
+                            <span>5</span>
+                            <span id="redfor-max-value">20</span>
+                            <span>50</span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                        <button id="randomize-btn" style="width: 100%; padding: 14px 24px; border-radius: 12px; border: 1px solid var(--separator); background: var(--surface); color: var(--text); font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                            Randomize unit type
+                        </button>
+                        <button id="randomize-size-btn" style="width: 100%; padding: 14px 24px; border-radius: 12px; border: 1px solid var(--separator); background: var(--surface); color: var(--text); font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                            Randomize unit size
+                        </button>
+                        <button id="generate-btn" style="width: 100%; padding: 14px 24px; border-radius: 12px; border: none; background: var(--blue); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                            Generate scenario
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal" id="results" style="display: none;">
+        <p class="section-label">Generated Scenario</p>
+        <div class="card-wrap">
+            <div class="card" style="padding: 32px;">
+                <div id="scenario-output" style="display: grid; gap: 20px;"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="script.js"></script>
+<script src="scenario-generator.js"></script>
+
+</body>
+</html>
