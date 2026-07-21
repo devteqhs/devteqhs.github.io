@@ -214,39 +214,59 @@ function filterSupportForTime(supportOptions, time) {
 function generateScenario() {
     const bluforType = document.getElementById('blufor-select').value;
     const redforType = document.getElementById('redfor-select').value;
-    const bluforMaxSize = getSliderValue('blufor');
-    const redforMaxSize = getSliderValue('redfor');
-    const balancedSizes = document.getElementById('balanced-sizes').checked;
-    
+
     const bluforData = unitData.blufor[bluforType];
     const redforData = unitData.redfor[redforType];
-    
-    let bluforSize = Math.floor(Math.random() * (bluforMaxSize - bluforData.baseSize + 1)) + bluforData.baseSize;
-    let redforSize = Math.floor(Math.random() * (redforMaxSize - redforData.baseSize + 1)) + redforData.baseSize;
-    
+
+    const bluforMaxSize = Math.max(getSliderValue('blufor'), bluforData.baseSize);
+    const redforMaxSize = Math.max(getSliderValue('redfor'), redforData.baseSize);
+
+    const balancedSizes = document.getElementById('balanced-sizes').checked;
+
+    let bluforSize;
+    let redforSize;
+
     if (balancedSizes) {
         const maxDiff = 10;
-        const diff = Math.abs(bluforSize - redforSize);
-        if (diff > maxDiff) {
-            if (bluforSize > redforSize) {
-                redforSize = Math.min(redforMaxSize, bluforSize - Math.floor(Math.random() * maxDiff));
-            } else {
-                bluforSize = Math.min(bluforMaxSize, redforSize - Math.floor(Math.random() * maxDiff));
-            }
+
+        if (Math.random() < 0.5) {
+
+            bluforSize = Math.floor(Math.random() * (bluforMaxSize - bluforData.baseSize + 1)) + bluforData.baseSize;
+
+            let min = Math.max(redforData.baseSize, bluforSize - maxDiff);
+            let max = Math.min(redforMaxSize, bluforSize + maxDiff);
+
+
+            if (min > max) min = max;
+
+            redforSize = Math.floor(Math.random() * (max - min + 1)) + min;
+        } else {
+
+            redforSize = Math.floor(Math.random() * (redforMaxSize - redforData.baseSize + 1)) + redforData.baseSize;
+
+            let min = Math.max(bluforData.baseSize, redforSize - maxDiff);
+            let max = Math.min(bluforMaxSize, redforSize + maxDiff);
+
+            if (min > max) min = max;
+
+            bluforSize = Math.floor(Math.random() * (max - min + 1)) + min;
         }
+    } else {
+        bluforSize = Math.floor(Math.random() * (bluforMaxSize - bluforData.baseSize + 1)) + bluforData.baseSize;
+        redforSize = Math.floor(Math.random() * (redforMaxSize - redforData.baseSize + 1)) + redforData.baseSize;
     }
-    
+
     const timeOfDay = randomChoice(additionalElements.timeOfDay);
-    
+
     let bluforVehicles = randomChoice(bluforData.vehicles);
     let redforVehicles = randomChoice(redforData.vehicles);
-    
+
     if (bluforVehicles.includes("None")) bluforVehicles = "None";
     if (redforVehicles.includes("None")) redforVehicles = "None";
-    
+
     const bluforSupport = filterSupportForTime(bluforData.support, timeOfDay);
     const redforSupport = filterSupportForTime(redforData.support, timeOfDay);
-    
+
     const bluforScenario = {
         faction: "BLUFOR",
         unitType: bluforData.name,
@@ -254,7 +274,7 @@ function generateScenario() {
         vehicles: bluforVehicles,
         support: randomChoice(bluforSupport.length > 0 ? bluforSupport : bluforData.support)
     };
-    
+
     const redforScenario = {
         faction: "REDFOR",
         unitType: redforData.name,
@@ -262,12 +282,12 @@ function generateScenario() {
         vehicles: redforVehicles,
         support: randomChoice(redforSupport.length > 0 ? redforSupport : redforData.support)
     };
-    
+
     const missionDetails = {
         role: randomChoice(additionalElements.roles),
         timeOfDay: timeOfDay
     };
-    
+
     displayScenario(bluforScenario, redforScenario, missionDetails);
 }
 
