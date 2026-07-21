@@ -47,7 +47,7 @@ const unitData = {
         mechanized: {
             name: "Mechanized Infantry",
             baseSize: 15,
-            vehicles: ["2x BMP/BMD", "3x BMP/BMD", "2x BTR"],
+            vehicles: ["2x IFV (Infantry Fighting Vehicle)", "3x IFV", "2x APC (Armored Personnel Carrier)"],
             support: [...supportOptions.fireSupport, "Attack helicopter", "Infantry QRF", "Motorised QRF"]
         },
         armored: {
@@ -196,17 +196,47 @@ function setSliderValue(name, value) {
     }
 }
 
+function isNightTime(time) {
+    const hour = parseInt(time);
+    return hour >= 20 || hour <= 6;
+}
+
+function filterSupportForTime(supportOptions, time) {
+    if (isNightTime(time)) {
+        return supportOptions;
+    }
+    return supportOptions.filter(option => 
+        !option.toLowerCase().includes('illumination') &&
+        !option.toLowerCase().includes('illum')
+    );
+}
+
 function generateScenario() {
     const bluforType = document.getElementById('blufor-select').value;
     const redforType = document.getElementById('redfor-select').value;
     const bluforMaxSize = getSliderValue('blufor');
     const redforMaxSize = getSliderValue('redfor');
+    const balancedSizes = document.getElementById('balanced-sizes').checked;
     
     const bluforData = unitData.blufor[bluforType];
     const redforData = unitData.redfor[redforType];
     
-    const bluforSize = Math.floor(Math.random() * (bluforMaxSize - bluforData.baseSize + 1)) + bluforData.baseSize;
-    const redforSize = Math.floor(Math.random() * (redforMaxSize - redforData.baseSize + 1)) + redforData.baseSize;
+    let bluforSize = Math.floor(Math.random() * (bluforMaxSize - bluforData.baseSize + 1)) + bluforData.baseSize;
+    let redforSize = Math.floor(Math.random() * (redforMaxSize - redforData.baseSize + 1)) + redforData.baseSize;
+    
+    if (balancedSizes) {
+        const maxDiff = 10;
+        const diff = Math.abs(bluforSize - redforSize);
+        if (diff > maxDiff) {
+            if (bluforSize > redforSize) {
+                redforSize = Math.min(redforMaxSize, bluforSize - Math.floor(Math.random() * maxDiff));
+            } else {
+                bluforSize = Math.min(bluforMaxSize, redforSize - Math.floor(Math.random() * maxDiff));
+            }
+        }
+    }
+    
+    const timeOfDay = randomChoice(additionalElements.timeOfDay);
     
     let bluforVehicles = randomChoice(bluforData.vehicles);
     let redforVehicles = randomChoice(redforData.vehicles);
@@ -214,12 +244,15 @@ function generateScenario() {
     if (bluforVehicles.includes("None")) bluforVehicles = "None";
     if (redforVehicles.includes("None")) redforVehicles = "None";
     
+    const bluforSupport = filterSupportForTime(bluforData.support, timeOfDay);
+    const redforSupport = filterSupportForTime(redforData.support, timeOfDay);
+    
     const bluforScenario = {
         faction: "BLUFOR",
         unitType: bluforData.name,
         size: `${bluforSize} men`,
         vehicles: bluforVehicles,
-        support: randomChoice(bluforData.support)
+        support: randomChoice(bluforSupport.length > 0 ? bluforSupport : bluforData.support)
     };
     
     const redforScenario = {
@@ -227,12 +260,12 @@ function generateScenario() {
         unitType: redforData.name,
         size: `${redforSize} men`,
         vehicles: redforVehicles,
-        support: randomChoice(redforData.support)
+        support: randomChoice(redforSupport.length > 0 ? redforSupport : redforData.support)
     };
     
     const missionDetails = {
         role: randomChoice(additionalElements.roles),
-        timeOfDay: randomChoice(additionalElements.timeOfDay)
+        timeOfDay: timeOfDay
     };
     
     displayScenario(bluforScenario, redforScenario, missionDetails);
